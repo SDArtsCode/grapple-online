@@ -60,8 +60,9 @@ func create_server() -> bool:
 #	print(ip_address)
 	
 	server = NetworkedMultiplayerENet.new()
-	var s = server.create_server(DEFAULT_PORT, max_clients)
-	if s == ERR_CANT_CREATE:
+	var err = server.create_server(DEFAULT_PORT, max_clients)
+	if err != OK:
+		server = null
 		return false
 	get_tree().set_network_peer(server)
 	print("server created")
@@ -74,12 +75,17 @@ func create_server() -> bool:
 		return true
 	return false
 	
-func join_server():
+func join_server() -> bool:
 	client = NetworkedMultiplayerENet.new()
 	print(ip_address)
-	client.create_client(ip_address, DEFAULT_PORT)
+	var err = client.create_client(ip_address, DEFAULT_PORT)
+	print(err)
+	if err != OK:
+		client = null
+		return false
 	get_tree().set_network_peer(client)
 	print("client created")
+	return true
 	
 func _connected_to_server():
 	print("connected")
@@ -87,7 +93,18 @@ func _connected_to_server():
 	# INSTANCE NEW CLIENT'S PLAYER
 	add_player(get_tree().get_network_unique_id(), username)
 	get_tree().change_scene("res://UI/OnlineLobby.tscn")
-	
+
+func disconnect_self():
+	if is_server:
+		server.close_connection()
+		is_server = false
+		server = null
+	else:
+		client.close_connection()
+		client = null
+	username = ""
+	ip_address = ""
+	get_tree().change_scene("res://UI/Offline.tscn")
 	
 func _server_disconnected():
 	print("disconnected")

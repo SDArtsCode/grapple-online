@@ -41,8 +41,4 @@ func _on_Server_pressed():
 
 
 func _on_Leave_pressed():
-	if Network.is_server:
-		Network.server.close_connection()
-	else:
-		Network.client.close_connection()
-	get_tree().change_scene("res://UI/Offline.tscn")
+	Network.disconnect_self()
