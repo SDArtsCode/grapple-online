@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://UI/PlayerLobbyCard.gd" type="Script" id=2]
+
+[node name="PlayerLobbyCard" type="PanelContainer"]
+margin_right = 200.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 300, 0 )
+script = ExtResource( 2 )
+
+[node name="Name" type="Label" parent="."]
+margin_left = 7.0
+margin_top = 10.0
+margin_right = 293.0
+margin_bottom = 24.0
+text = "GregBudwibnn"
+valign = 1
+
+[node name="Ready" type="Label" parent="."]
+margin_left = 7.0
+margin_top = 10.0
+margin_right = 293.0
+margin_bottom = 24.0
+text = "Ready"
+align = 2
+valign = 1
