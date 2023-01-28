@@ -65,15 +65,3 @@ script = ExtResource( 5 )
 
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2( 512, 300 )
-
-[node name="Player" type="KinematicBody2D" parent="."]
-
-[node name="Label" type="Label" parent="Player"]
-margin_left = -96.0
-margin_top = -40.0
-margin_right = 96.0
-margin_bottom = -26.0
-align = 1
-valign = 1
-
-[node name="Sprite" type="Sprite" parent="Player"]

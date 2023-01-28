@@ -23,19 +23,45 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
-margin_left = 453.0
-margin_top = 293.0
-margin_right = 571.0
-margin_bottom = 307.0
+margin_left = 451.0
+margin_top = 281.0
+margin_right = 573.0
+margin_bottom = 319.0
 custom_constants/separation = 10
 alignment = 1
 
 [node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
-margin_right = 118.0
+margin_right = 122.0
 margin_bottom = 14.0
 text = "PLAYERS IN GAME:"
 align = 1
 valign = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+margin_top = 24.0
+margin_right = 122.0
+margin_bottom = 38.0
+custom_constants/separation = 40
+alignment = 1
+
+[node name="Team1" type="VBoxContainer" parent="CenterContainer/VBoxContainer/HBoxContainer"]
+margin_right = 41.0
+margin_bottom = 14.0
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer/HBoxContainer/Team1"]
+margin_right = 41.0
+margin_bottom = 14.0
+text = "team1"
+
+[node name="Team2" type="VBoxContainer" parent="CenterContainer/VBoxContainer/HBoxContainer"]
+margin_left = 81.0
+margin_right = 122.0
+margin_bottom = 14.0
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer/HBoxContainer/Team2"]
+margin_right = 41.0
+margin_bottom = 14.0
+text = "team2"
 
 [node name="CenterContainer2" type="CenterContainer" parent="."]
 anchor_right = 1.0
