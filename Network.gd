@@ -76,10 +76,10 @@ func create_server() -> bool:
 	return false
 	
 func join_server() -> bool:
+	if client:
+		disconnect_self()
 	client = NetworkedMultiplayerENet.new()
-	print(ip_address)
 	var err = client.create_client(ip_address, DEFAULT_PORT)
-	print(err)
 	if err != OK:
 		client = null
 		return false
