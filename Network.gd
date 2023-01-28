@@ -113,7 +113,8 @@ func _server_disconnected():
 	
 remotesync func add_player(id, _name):
 	players[id] = {
-		"name" : _name
+		"name" : _name,
+		"is_team1" : false
 	}
 	emit_signal("player_registered", id)
 	
