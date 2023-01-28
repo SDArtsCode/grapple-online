@@ -13,21 +13,7 @@ func _ready():
 		
 	if Network.is_server:
 		$CenterContainer3/VBoxContainer/Server.disabled = false
-		for player_key in Network.players.keys():
-			Network.players[player_key]["is_team1"] = is_team1
-			is_team1 = !is_team1
-			add_player_card(player_key, Network.players[player_key].name, Network.players[player_key]["is_team1"], false)
-			#rpc('sync_new_player_card', player_key, Network.players[player_key]["is_team1"])
-		
-remotesync func sync_new_player_card(new_player_id, _is_team1):
-	Network.players[new_player_id]["is_team1"] = _is_team1
-	add_player_card(new_player_id, Network.players[new_player_id].name, _is_team1, false)
 
-puppet func sync_old_player_cards(new_players):
-	Network.players = new_players
-	for player_key in Network.players.keys():
-		add_player_card(player_key, Network.players[player_key].name, Network.players[player_key]["is_team1"], false)
-	
 func add_player_card(id, _name, is_team1 : bool, is_ready):
 	var card = PLAYER_CARD.instance()
 	card.id = id
@@ -52,12 +38,7 @@ func _network_peer_disconnected(id):
 	remove_player_card(id)
 
 func _Network_player_registered(id):
-	if Network.is_server:
-		Network.players[id].is_team1 = is_team1
-		is_team1 = !is_team1
-		#add_player_card(id, Network.players[id].name, Network.players[id]["is_team1"], false)
-		rpc('sync_new_player_card', id, Network.players[id].is_team1)
-		rpc_id(id, 'sync_old_player_cards', Network.players)
+	pass
 
 func _on_Server_pressed():
 	Global.game_state = Global.ONLINEGAME
