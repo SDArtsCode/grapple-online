@@ -21,6 +21,9 @@ var radius := 20.0
 var accel := 5.0
 var ACCEL := accel
 
+func _ready():
+	$Label.text = Network.players[int(name)].name
+		
 func _physics_process(delta):
 	if is_network_master():
 		dash_timer += delta
