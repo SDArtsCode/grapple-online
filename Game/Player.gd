@@ -3,10 +3,10 @@ extends KinematicBody2D
 
 var is_team1 : bool = true
 
-const max_speed := 8.0
+const max_speed := 200.0
 const dash_regen_rate := 2.5
 const max_dashes := 3
-const dash_speed := 30.0
+const dash_speed := 30.0/4.0
 const ring_size := 400.0
 const PULL_SPEED := 10.0
 const MAX_HOOKTIME := 2.5
@@ -18,11 +18,11 @@ var hook_timer = 0.0
 var velocity := Vector2.ZERO
 var color = Color(0,0,0)
 var radius := 20.0
-var accel := 5.0
+var accel := 20.0
 var ACCEL := accel
 
 func _ready():
-	$Label.text = Network.players[int(name)].name
+	pass
 		
 func _physics_process(delta):
 	if is_network_master():
@@ -39,7 +39,7 @@ func _physics_process(delta):
 		if hooked: 
 			accel = ACCEL*3
 		velocity = lerp(velocity, dir.normalized()*max_speed, delta*accel)
-		move_and_collide(velocity*144*delta)
+		move_and_slide(velocity)
 		rpc_unreliable("update_player_pos", global_position)
 	update()
 	
