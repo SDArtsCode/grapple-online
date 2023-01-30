@@ -17,7 +17,7 @@ var players : Dictionary = {
 	
 }
 
-signal player_registered()
+signal players_updated()
 
 func _ready():
 	if Global.is_headless_server:
@@ -38,16 +38,17 @@ func _ready():
 	get_tree().connect("network_peer_disconnected", self,"_network_peer_disconnected")
 
 func _network_peer_connected(id):
-	print("peer connected")
+	# called when a new player connects or on each player when a player connects
 	if is_server and Global.game_state == Global.ONLINEGAME:
 		server.disconnect_peer(id)
 		return
-	print('new player connected')
-	rpc_id(id, "add_player", get_tree().get_network_unique_id(), username)
+	# add self to a newly connected persons game
+	if is_server:
+		rpc_id(id, 'update_players', players)
+	#rpc_id(id, "add_player", get_tree().get_network_unique_id(), username)
 	
 func _network_peer_disconnected(id):
-	print("peer disconnected")
-	remove_player(id)
+	pass
 		
 func create_server() -> bool:
 #	if upnp == null:
@@ -70,6 +71,7 @@ func create_server() -> bool:
 	if !Global.is_headless_server:
 		is_server = true
 		Global.game_state = Global.ONLINELOBBY
+		# add self to our own game
 		add_player(get_tree().get_network_unique_id(), username)
 		get_tree().change_scene("res://UI/OnlineLobby.tscn")
 		return true
@@ -88,10 +90,11 @@ func join_server() -> bool:
 	return true
 	
 func _connected_to_server():
-	print("connected")
 	yield(get_tree().create_timer(0.1), "timeout")
 	# INSTANCE NEW CLIENT'S PLAYER
-	add_player(get_tree().get_network_unique_id(), username)
+	# add self to our own game
+	#add_player(get_tree().get_network_unique_id(), username)
+	rpc_id(0, 'add_player', get_tree().get_network_unique_id(), username)
 	get_tree().change_scene("res://UI/OnlineLobby.tscn")
 
 func disconnect_self():
@@ -107,25 +110,35 @@ func disconnect_self():
 	get_tree().change_scene("res://UI/Offline.tscn")
 	
 func _server_disconnected():
-	print("disconnected")
 	get_tree().change_scene("res://UI/Offline.tscn")
 	
 	
 remotesync func add_player(id, _name):
-	players[id] = {
-		"name" : _name,
-		"is_team1" : false
-	}
-	emit_signal("player_registered", id)
-	
-remotesync func add_player_on_all_clients(id, _name):
-	add_player(id, _name)
+	if is_server:
+		var t1 = 0
+		var t2 = 0
+		for player in players.keys():
+			if players[player].is_team1:
+				t1 += 1
+			else:
+				t2 += 1
+		var tdiff = t1-t2
+		var is_team1 = true
+		if tdiff > 0:
+			is_team1 = false
+		players[id] = {
+			"name" : _name,
+			"is_team1" : is_team1
+		}
+		rpc('update_players', players)
+		print(players)
+
+remotesync func update_players(new_players):
+	players = new_players
+	emit_signal("players_updated", new_players)
 	
 func remove_player(id):
 	players.erase(id)
-
-remotesync func remove_player_on_all_clients(id):
-	remove_player(id)
 
 func _exit_tree():
 	if upnp:

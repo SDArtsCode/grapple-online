@@ -20,15 +20,18 @@ func _ready():
 		rpc('update_scores')
 		rpc('load_players')
 		
-remotesync func load_players():
+remote func load_players():
 	var self_id = get_tree().get_network_unique_id()
-	for player in Network.players:
+	for player_key in Network.players.keys():
 		var player_instance = PLAYER_SCENE.instance()
 		add_child(player_instance)
-		player_instance.name = Network.players.keys()[player]
-		if Network.players.keys()[player] == self_id:
+		player_instance.name = str(player_key)
+		player_instance.is_team1 = Network.players[player_key].is_team1
+		print('looped through player')
+		if player_key == self_id:
+			print('assigned self player')
 			player_instance.set_network_master(self_id)
-
+	print(get_children())
 func _process(_delta):
 	pass
 

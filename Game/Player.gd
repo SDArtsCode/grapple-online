@@ -1,16 +1,73 @@
 extends KinematicBody2D
 
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
+var is_team1 : bool = true
 
+const max_speed := 8.0
+const dash_regen_rate := 2.5
+const max_dashes := 3
+const dash_speed := 30.0
+const ring_size := 400.0
+const PULL_SPEED := 10.0
+const MAX_HOOKTIME := 2.5
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
+var dashes := 0
+var hooked := false
+var dash_timer = 0.0
+var hook_timer = 0.0
+var velocity := Vector2.ZERO
+var color = Color(0,0,0)
+var radius := 20.0
+var accel := 5.0
+var ACCEL := accel
 
+func _physics_process(delta):
+	if is_network_master():
+		dash_timer += delta
+		if dash_timer >= dash_regen_rate:
+			if dashes < max_dashes:
+				dashes += 1
+			dash_timer = 0.0
+		
+		var dir: Vector2
+		dir.x = int(Input.is_action_pressed("right"))-int(Input.is_action_pressed("left"))
+		dir.y = int(Input.is_action_pressed("down"))-int(Input.is_action_pressed("up"))
+		accel = ACCEL
+		if hooked: 
+			accel = ACCEL*3
+		velocity = lerp(velocity, dir.normalized()*max_speed, delta*accel)
+		move_and_collide(velocity*144*delta)
+		rpc_unreliable("update_player_pos", global_position)
+	update()
+	
+remote func update_player_pos(new_pos):
+	global_position = new_pos
+	
+func _input(event):
+	if !is_network_master():
+		return
+	if event.is_action_pressed("dash") and dashes > 0:
+		dashes -= 1
+		velocity = velocity.normalized()*dash_speed
+		if hooked:
+			# change max speed of ball x2
+			velocity *= 3
+		dash_timer = 0.0
+		
+	if event.is_action_pressed("hook"):
+		hooked = true
+		
+	if event.is_action_released("hook"):
+		hooked = false
+		
+func _draw():
+	if hooked:
+		draw_line(Vector2.ZERO, Global.ball.global_position-global_position, Color(1,1,1), 5, true)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func change_dash(num = 1):
+	if num > 0:
+		pass
+	elif num < 0:
+		pass
+	else: 
+		return
