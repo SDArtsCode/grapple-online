@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Game/OnlineGame.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Group 2.png" type="Texture" id=2]
@@ -7,7 +7,6 @@
 [ext_resource path="res://Game/ScoreLabel.gd" type="Script" id=5]
 [ext_resource path="res://Game/Goal.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Assets/circle.png" type="Texture" id=7]
-[ext_resource path="res://Game/Player.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Game/Ball.gd" type="Script" id=9]
 
 [sub_resource type="DynamicFont" id=1]
@@ -99,6 +98,11 @@ polygon = PoolVector2Array( 160, 16, 24, 144, 24, 200, 0, 216, -64, 216, -64, 38
 [node name="Ball" type="RigidBody2D" parent="." groups=["ball"]]
 position = Vector2( 424, 352 )
 physics_material_override = SubResource( 4 )
+gravity_scale = 2.0
+continuous_cd = 2
+contacts_reported = 3
+contact_monitor = true
+can_sleep = false
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_group_": true
@@ -113,5 +117,7 @@ position = Vector2( -1.00136e-05, 2.86102e-06 )
 scale = Vector2( 0.32, 0.32 )
 texture = ExtResource( 7 )
 
-[node name="Player" parent="." instance=ExtResource( 8 )]
-position = Vector2( 472, 376 )
+[node name="BallStarter" type="Position2D" parent="."]
+position = Vector2( 510, 302 )
+
+[connection signal="timeout" from="GameTimer" to="." method="_on_GameTimer_timeout"]

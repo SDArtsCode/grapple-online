@@ -57,15 +57,19 @@ func _input(event):
 			velocity *= 3
 		dash_timer = 0.0
 		
-	if event.is_action_pressed("hook"):
-		hooked = true
+	if Input.is_action_just_pressed("hook") and (get_parent().ball.global_position - global_position).length() < 200:
+		if !get_parent().ball.player_hooked:
+			get_parent().ball.rpc_id(0, "set_player_hooked", self)
+			hooked = true
 		
 	if event.is_action_released("hook"):
-		hooked = false
+		if get_parent().ball.player_hooked == self:
+			get_parent().ball.rpc_id(0, "set_player_hooked", null)
+			hooked = false
 		
 func _draw():
 	if hooked:
-		draw_line(Vector2.ZERO, Global.ball.global_position-global_position, Color(1,1,1), 5, true)
+		draw_line(Vector2.ZERO, get_parent().ball.global_position-global_position, Color(1,1,1), 5, true)
 
 func change_dash(num = 1):
 	if num > 0:
